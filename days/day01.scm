@@ -2,5 +2,5 @@
   #:export (run))
 
 (define (run input)
-        (display (car input))
-        (newline))
+  (display (car input))
+  (newline))
