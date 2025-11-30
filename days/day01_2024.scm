@@ -1,0 +1,28 @@
+(define-module (days day01-2024)
+  #:export (run)
+  #:use-module (srfi srfi-1)
+  #:use-module (srfi srfi-13))
+
+(define (part1 p1 p2)
+  (fold + 0 (map (lambda (x y) (abs (- x y))) p1 p2)))
+
+(define (part2 p1 p2)
+  (let ((hash (make-hash-table)))
+    (for-each (lambda (c)
+                (unless (hash-get-handle hash c)
+                  (hash-set! hash c
+                             (count (lambda (x) (= x c)) p2)))) p1)
+    (fold (lambda (x acum)
+            (+ acum (* (hash-ref hash x 0) x))) 0 p1)))
+
+(define (run input)
+  (let* ((rows (map string-tokenize input))
+         (unz (apply map list rows))
+         (p1 (sort (map string->number (car unz)) <))
+         (p2 (sort (map string->number (cadr unz)) <)))
+    (display "Part1: ")
+    (display (part1 p1 p2))
+    (newline)
+    (display "Part2: ")
+    (display (part2 p1 p2))
+    (newline)))
