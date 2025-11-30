@@ -1,4 +1,4 @@
-(define-module (days day01)
+(define-module (days day11)
   #:export (run))
 
 (define (part1 input)
