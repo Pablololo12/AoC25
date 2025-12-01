@@ -38,7 +38,7 @@
 
 (define (get-day n)
   (let ((filename (format #f "inputs/day~d" n))
-        (urif (format #f "https://adventofcode.com/2024/day/~d/input" n)))
+        (urif (format #f "https://adventofcode.com/2025/day/~d/input" n)))
     (unless (file-exists? filename)
         (write-file filename
                     (download urif)))
