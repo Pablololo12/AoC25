@@ -9,42 +9,28 @@
 
 (define (reccalc x y)
   (if (and (> x -1) (< x 100))
-      (if (= x 0)
-          (cons x 1)
-          (cons x 0))
-      (cond
-       ((< x 0) (reccalc (+ 100 x) y))
-       (else (reccalc (- x 100) y)))))
-
-(define (reccalc2 x y)
-  (if (and (> x -1) (< x 100))
-      (cons x y)
-      (cond
-       ((< x 0) (reccalc2 (+ 100 x) (+ y 1)))
-       (else (reccalc2 (- x 100) (+ y 1))))))
+      (cons x (if (= x 0) 1 0))
+      (reccalc ((if (< x 0) + -) x 100) (+ y 1))))
 
 (define (calcjump x y)
-  ;; x is the instruction and y the position
   (let ((mov (calcmove x y)))
     (reccalc mov 0)))
 
+(define (reccalc2 x y dir)
+  (if (and (> x -1) (< x 100))
+      (cons x (if (= x 0) (+ dir y) y))
+      (reccalc2 ((if (< x 0) + -) x 100) (+ y 1) dir)))
+
 (define (calcjump2 x y)
-  ;; x is the instruction and y the position
-  (let ((mov (calcmove x y)))
-    (reccalc2 mov 0)))
+  (let* ((mov (calcmove x y))
+         (count (if (and (= y 0) (< mov 0)) -1 0))
+         (dir (if (> mov 0) 0 1)))
+    (reccalc2 mov count dir)))
 
-(define (part1 input)
+(define (algo input func)
   (fold (lambda (x acum)
-          (let ((n (calcjump x (car acum))))
-            ;;(format #t "~a ~a~%" x acum)
-            (cons (car n) (+ (cdr n) (cdr acum)))))
-           (cons 50 0) input))
-
-(define (part2 input)
-  (fold (lambda (x acum)
-          (let ((n (calcjump2 x (car acum))))
-            (format #t "~a ~a~%" x acum)
-            (cons (car n) (+ (cdr n) (cdr acum)))))
+          (let ((n (func x (car acum))))
+                        (cons (car n) (+ (cdr n) (cdr acum)))))
            (cons 50 0) input))
 
 (define (run input)
@@ -53,9 +39,4 @@
                        (substring x 0 1)
                        (string->number
                         (substring x 1 (string-length x))))) input)))
-    (display "Part1: ")
-    (display (part1 rows))
-    (newline)
-    (display "Part2: ")
-    (display (part2 rows))
-    (newline)))
+    (format #t "Part1: ~a~%Part2: ~a~%" (algo rows calcjump) (algo rows calcjump2))))
