@@ -1,13 +1,33 @@
 (define-module (days day02)
   #:export (run)
-  #:use-module (srfi srfi-1))
+  #:use-module (srfi srfi-1)
+  #:use-module (ice-9 threads))
 
 (define (getdig num)
-  (inexact->exact (+ 1 (floor (log10 num)))))
+  (cond
+   ((< num 10) 1)
+   ((< num 100) 2)
+   ((< num 1000) 3)
+   ((< num 10000) 4)
+   ((< num 100000) 5)
+   ((< num 1000000) 6)
+   ((< num 10000000) 7)
+   ((< num 100000000) 8)
+   ((< num 1000000000) 9)
+   ((< num 10000000000) 10)
+   ((< num 100000000000) 11)
+   (else (inexact->exact (+ 1 (floor (log10 num)))))))
+
+(define (pow10 e)
+  (letrec ((powrec (lambda (i acum)
+                     (if (= i 0)
+                         acum
+                         (powrec (- i 1) (* acum 10))))))
+    (powrec e 1)))
 
 (define (legal num)
   (let* ((ndig (getdig num))
-         (half (expt 10 (quotient ndig 2))))
+         (half (pow10 (quotient ndig 2))))
     (if (= (modulo ndig 2) 0)
         (if (= (modulo num half) (quotient num half))
               num
@@ -21,7 +41,7 @@
    (else #f)))
 
 (define (checkg rr num)
-  (let ((group (expt 10 rr)))
+  (let ((group (pow10 rr)))
     (reccheck (quotient num group) (modulo num group) group)))
 
 (define (legal2 num)

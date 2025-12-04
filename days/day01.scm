@@ -28,10 +28,10 @@
     (reccalc2 mov count dir)))
 
 (define (algo input func)
-  (fold (lambda (x acum)
+  (cdr (fold (lambda (x acum)
           (let ((n (func x (car acum))))
                         (cons (car n) (+ (cdr n) (cdr acum)))))
-           (cons 50 0) input))
+           (cons 50 0) input)))
 
 (define (run input)
   (let* ((rows (map (lambda (x)
