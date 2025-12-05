@@ -11,6 +11,16 @@
                       0))
                 ing)))
 
+(define (ranges-overlap? r1 r2)
+    (and (<= (car r1) (cdr r2))
+         (<= (car r2) (cdr r1))))
+
+(define (check-merge r1 r2)
+  (if (ranges-overlap? r1 r2)
+      (cons (min (car r1) (car r2))
+            (max (cdr r1) (cdr r2)))
+      r1))
+
 (define (merge-element full rest)
   (let* ((new     (car rest))
          (merged  (map (lambda (x) (check-merge x new)) full))
@@ -24,23 +34,10 @@
       start
       (merge (merge-element start lis) (cdr lis))))
 
-(define (ranges-overlap? r1 r2)
-    (and (<= (car r1) (cdr r2))
-         (<= (car r2) (cdr r1))))
-
-(define (check-merge r1 r2)
-  (if (ranges-overlap? r1 r2)
-      (cons (min (car r1) (car r2))
-            (max (cdr r1) (cdr r2)))
-      r1))
-
-(define (part2 lis)
-  (let loop ((prev (length lis))
-             (new lis))
-    (let ((nn (merge (cons (car new) '()) (cdr new))))
-      (if (= (length nn) prev)
-          (apply + (map (lambda (x) (+ (- (cdr x) (car x)) 1)) nn))
-          (loop (length nn) nn)))))
+(define (part2 ranges)
+  (let* ((ordered (sort ranges (lambda (x y) (< (car x) (car y)))))
+         (merged (merge (cons (car ordered) '()) (cdr ordered))))
+    (apply + (map (lambda (x) (+ (- (cdr x) (car x)) 1)) merged))))
 
 (define (run input)
   (let-values (((range ingredients) 
