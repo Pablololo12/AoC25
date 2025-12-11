@@ -13,7 +13,7 @@
 (define (main args)
   (cond
    ((null? (cdr args))
-    (let loop ((days '(1 2 3 4 5 6 7)))
+    (let loop ((days '(1 2 3 4 5 6 7 8)))
       (unless (null? days)
         (run-day (car days))
         (loop (cdr days)))))
